@@ -1,0 +1,26 @@
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
+    <!-- 配置文件的标识，同时生成的jar包名字会把这个文本包含进去 -->
+    <id>release</id>
+    <formats>
+        <!-- 打包类型，此处为jar -->
+        <format>jar</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory>/</outputDirectory>
+            <useProjectArtifact>true</useProjectArtifact>
+            <!--打包方式分两种，一种是把第三方jar包解压成class再加入进我们的jar包中，另一个则是不解压直接把jar包加入我们的jar中-->
+            <unpack>true</unpack>
+            <scope>runtime</scope>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>/</outputDirectory>
+            <useProjectArtifact>true</useProjectArtifact>
+            <unpack>true</unpack>
+            <scope>system</scope>
+        </dependencySet>
+    </dependencySets>
+</assembly>

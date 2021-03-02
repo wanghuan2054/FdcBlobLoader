@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.boe</groupId>
+    <artifactId>FdcBlobLoader</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    <name>FdcBlobLoader</name>
+    <description>FDC Dry Pump Data Capture</description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <ojdbc6.version>11.2.0.4</ojdbc6.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <druid.version>1.2.5</druid.version>
+        <log4j.version>1.2.17</log4j.version>
+        <dbcp.version>1.4</dbcp.version>
+        <HikariCP.version>4.0.2</HikariCP.version>
+    </properties>
+    <dependencies>
+        <!-- 添加本地jar包依赖 -->
+<!--        <dependency>
+            <groupId>com.pretty_tools.dde</groupId>
+            <artifactId>jdde</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/pretty-tools-JDDE-2.1.0.jar</systemPath>
+        </dependency>-->
+        <dependency>
+            <groupId>com.oracle.database.jdbc</groupId>
+            <artifactId>ojdbc6</artifactId>
+            <version>${ojdbc6.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>${druid.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+            <version>${dbcp.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>${HikariCP.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.30</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.30</version>
+        </dependency>
+        <dependency>
+            <groupId>org.javassist</groupId>
+            <artifactId>javassist</artifactId>
+            <version>3.27.0-GA</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+       <!-- 使用maven ，properties等配置文件打包放在target目录的位置-->
+        <resources>
+            <resource>
+                <directory>${project.basedir}/src/main/resources</directory>
+                <includes>
+                    <include>*.properties</include>
+                </includes>
+            </resource>
+        </resources>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
+            </plugin>
+
+            <!-- 方法1 使用maven-jar-plugin和maven-dependency-plugin插件打包 -->
+            <!--<plugin>
+                &lt;!&ndash; maven-jar-plugin用于生成META-INF/MANIFEST.MF文件的部分内容 &ndash;&gt;
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            &lt;!&ndash; 会在MANIFEST.MF加上Class-Path项并配置依赖包 &ndash;&gt;
+                            <addClasspath>true</addClasspath>
+                            &lt;!&ndash; 指定依赖包所在目录 &ndash;&gt;
+                            <classpathPrefix>lib/</classpathPrefix>
+                            &lt;!&ndash; 指定程序入口 &ndash;&gt;
+                            <mainClass>dde.DDEImport</mainClass>
+                        </manifest>
+                        &lt;!&ndash;将jdde-1.0.jar写进MANIFEST.MF文件中的Class-Path&ndash;&gt;
+                        <manifestEntries>
+                            <Class-Path>lib/jdde-1.0.jar</Class-Path>
+                        </manifestEntries>
+                    </archive>
+                    &lt;!&ndash;排除用于测试的日志配置资源文件&ndash;&gt;
+                    &lt;!&ndash;<excludes>
+                        <exclude>log4j2-test.xml</exclude>
+                    </excludes>&ndash;&gt;
+                </configuration>
+            </plugin>
+            &lt;!&ndash;在打包阶段将依赖的jar包导出到lib目录下&ndash;&gt;
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.1.1</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                            &lt;!&ndash;
+                            打包添加本地自定义jar包到lib目录
+                            <includeScope>system</includeScope>
+                            &ndash;&gt;
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>-->
+
+            <!-- 方法2 使用maven-assembly-plugin插件打包 -->
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <descriptors>
+                        <!--assembly配置文件路径，注意需要在项目中新建文件assembly/release.xml-->
+                        <descriptor>${project.basedir}/assembly/release.xml</descriptor>
+                    </descriptors>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <mainClass>blobData.MainProgram</mainClass>
+                        </manifest>
+                        <!--本地依赖jar包添加进 MANIFEST.MF ，将本地jar包放在lib下，从classpath加载-->
+                        <!--                        <manifestEntries>
+                                                    <Class-Path>lib/*.jar</Class-Path>
+                                                </manifestEntries>-->
+                    </archive>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

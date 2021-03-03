@@ -1,4 +1,4 @@
-package blobData;
+package blobdata;
 
 public enum EDS_FDC_TRACEFIELD {
 

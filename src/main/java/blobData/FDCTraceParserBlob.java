@@ -1,4 +1,4 @@
-package blobData;
+package blobdata;
 
 import Utils.DBUtil;
 import Utils.FileUtils;

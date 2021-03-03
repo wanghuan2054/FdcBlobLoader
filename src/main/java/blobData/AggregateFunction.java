@@ -1,4 +1,4 @@
-package blobData;
+package blobdata;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

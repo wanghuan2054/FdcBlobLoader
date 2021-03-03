@@ -1,4 +1,4 @@
-package blobData;
+package blobdata;
 
 import java.util.ArrayList;
 import java.util.List;

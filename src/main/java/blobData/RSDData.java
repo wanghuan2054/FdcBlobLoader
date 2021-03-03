@@ -1,19 +1,13 @@
-package blobData;
+package blobdata;
 
 public class RSDData {
+	// RSD_04
 	private String moduleName;
-	private String productionType; 
+	// RSD_05 Production Type 目前无法从EQP_TRACE_TRX_FDC表的相关字段得到，暂时不启用这个属性
+	private String productionType;
+	//  RSD_17
 	private String operationName;
 
-	/**
-	 * @param moduleName
-	 *            RSD_04
-	 * @param productionType
-	 *            RSD_05 Production Type
-	 *            目前无法从EQP_TRACE_TRX_FDC表的相关字段得到，暂时不启用这个属性
-	 * @param operationName
-	 *            RSD_17
-	 */
 	public RSDData() {
 		super();
 	}

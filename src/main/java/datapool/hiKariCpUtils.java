@@ -46,14 +46,16 @@ public class hiKariCpUtils {
 
 	public static void free(ResultSet rs, PreparedStatement ps, Connection conn) {
 		try {
-			if (rs != null)
+			if (rs != null) {
 				rs.close();
+			}
 		} catch (SQLException e) {
 			LogManager.log("E",e.getMessage()) ;
 		} finally {
 			try {
-				if (ps != null)
+				if (ps != null) {
 					ps.close();
+				}
 			} catch (SQLException e) {
 				LogManager.log("E",e.getMessage()) ;
 			} finally {

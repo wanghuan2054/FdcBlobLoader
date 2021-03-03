@@ -31,7 +31,7 @@ public class DateUtils {
        return null ; 
 	}
 
-    /*
+    /**
      * 得到指定分钟后的时间 传入 str类型 返回 指定分钟后的str类型 input 20171201 070000 （30分钟） return
      * 20171201 073000
      */
@@ -40,33 +40,35 @@ public class DateUtils {
         int mins = 30 ;
         return getAfterTimeByMins(str,mins);
     }
-    /*
-     * 得到指定分钟后的时间 传入 str类型 返回 指定分钟前的str类型 input 20171201 070000 （30分钟）
-     * return 20171201 063000
+    /**
+     * 得到指定分钟后的时间 传入 str类型 返回 指定分钟前的str类型 input 20171201 070000 （120分钟）
+     * return 20171201 050000
      */
     public static String getBeforeTime(String str) {
         int mins = -120 ;
         return getAfterTimeByMins(str,mins);
     }
 
-    /*
+    /**
      * 得到指定分钟后的时间 传入 str类型 返回 指定分钟后的str类型 input 20171201 070000 （30分钟） return
      * 20171201 073000
      */
     public static String getAfterTimeByMins(String str,int mins) {
         Date dBefore = null;
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd HHmmss");
-        Calendar calendar = Calendar.getInstance(); // 得到日历
+        Calendar calendar = Calendar.getInstance();
         try {
-            calendar.setTime(format.parse(str)); // 把当前时间赋给日历
+            // 把当前时间赋给日历
+            calendar.setTime(format.parse(str));
         } catch (ParseException e) {
             LogManager
                     .log("E", "date format is error :" + str + e.getMessage());
         }
-        calendar.add(Calendar.MINUTE, mins); // 设置为30 minute 后
+        // 设置为30 minute 后
+        calendar.add(Calendar.MINUTE, mins);
         dBefore = calendar.getTime();
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HHmmss"); // 设置时间格式
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HHmmss");
         String defaultStartDate = sdf.format(dBefore);
 
         return defaultStartDate;
@@ -78,7 +80,7 @@ public class DateUtils {
      */
     public static String getCurrentTime() {
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HHmmss"); // 设置时间格式
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HHmmss");
         String currentDate = sdf.format(new Date());
 
         return currentDate;

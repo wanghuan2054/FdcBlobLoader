@@ -1,4 +1,4 @@
-package blobData;
+package blobdata;
 
 import Utils.DBUtil;
 import Utils.DateUtils;
@@ -7,9 +7,13 @@ import config.LogManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * @author 10024908
+ */
 public class MainProgram {
     public static void main(String[] args) {
-        String startTime = System.getProperty("STARTTIME") == null ? DateUtils.getBeforeTime(DateUtils.getCurrentTime()) : System.getProperty("STARTTIME");
+        // 优先取Program Arguments 参数，其次取System.getProperty("STARTTIME") Java运行设置参数，若都不存在则取当前JVM时间向前推120Mins
+        String startTime = args[0] == null ? (System.getProperty("STARTTIME") == null ? DateUtils.getBeforeTime(DateUtils.getCurrentTime()) : System.getProperty("STARTTIME")) : args[0];
         String endTime = null;
         boolean flag = true;
         while (true) {
@@ -24,12 +28,13 @@ public class MainProgram {
                     LogManager.log("I", "endTime:" + endTime + " > "
                             + "currentTime:" + DateUtils.getCurrentTime()
                             + ",需要线程挂起5分钟等待");
-                    Thread.sleep(300000); // 如果endTime 大于 当前时间，则等待5分钟
+                    // 如果endTime 大于 当前时间，则等待5分钟
+                    Thread.sleep(300000);
                 } catch (InterruptedException e) {
                     LogManager.log("E", e.getMessage());
                 }
             }
-            ResultSet rs = null;
+            ResultSet rs;
             long t1 = System.currentTimeMillis();
             /* 测试指定startTime-endTime多组数据时采用 */
             rs = DBUtil.getInstance().getRecordsFromEQP_TRACE_TRX_FDC(
@@ -38,11 +43,11 @@ public class MainProgram {
                     + " to " + endTime);
 
             /* 测试单个数据， 单条 Glass data 时采用 */
-/*			 rs = DBUtil.getInstance().getSingleRescordsFromEQP_TRACE_TRX_FDC(
+              /*rs = DBUtil.getInstance().getSingleRescordsFromEQP_TRACE_TRX_FDC(
 			 "BOE/B6/LBP_2F/LTPS:6LTDH01/6LTDH01-CHMB", "6LF6990046A2",
-			 "6LTDH01_DCP"); // 6LWN6Y0731C3
-*/
-            FDCTraceParserBlob fdcTraceParserBlob = null;
+			 "6LTDH01_DCP"); */
+
+            FDCTraceParserBlob fdcTraceParserBlob;
             int count = 0;
             try {
                 while (rs.next()) {

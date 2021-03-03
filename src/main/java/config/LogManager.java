@@ -7,7 +7,7 @@ import java.util.Properties;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
-import blobData.ConstantDefinition;
+import blobdata.ConstantDefinition;
 
 public class LogManager {
 	private static Logger logger = null;

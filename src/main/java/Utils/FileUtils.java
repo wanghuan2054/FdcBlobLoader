@@ -1,7 +1,7 @@
 package Utils;
 
-import blobData.ConstantDefinition;
-import blobData.RSDData;
+import blobdata.ConstantDefinition;
+import blobdata.RSDData;
 import config.LogManager;
 
 import java.io.*;
@@ -17,7 +17,7 @@ public class FileUtils {
 
 	private static LinkedHashMap<String, List<String>> allParams;
 
-	/*
+	/**
 	 * 从数据获取Blob字段， 并按照GZip解压缩到outPath临时路径下
 	 */
 	public static void decompressionGZip(Blob blob, String outPath) {
@@ -57,7 +57,7 @@ public class FileUtils {
 		}
 	}
 
-	/*
+	/**
 	 * 从临时文件resultTemp下取出解压完的Blob数据
 	 */
 	public static LinkedHashMap<String, List<String>> getContentFromTemptxt(
@@ -71,9 +71,11 @@ public class FileUtils {
 		List<String> tableHeader = new ArrayList<String>();
 		allParams = new LinkedHashMap<String, List<String>>();
 		try {
-			bre = new BufferedReader(new FileReader(new File(path)));// 此时获取到的bre就是整个文件的缓存流
+			// 此时获取到的bre就是整个文件的缓存流
+			bre = new BufferedReader(new FileReader(new File(path)));
 			String params_Keyname = null;
-			while ((tempLine_str = bre.readLine()) != null) // 判断最后一行不存在，为空结束循环
+			// 判断最后一行不存在，为空结束循环
+			while ((tempLine_str = bre.readLine()) != null)
 			{
 				String[] lineList = null;
 				if (tempLine_str.contains(ConstantDefinition.LINE_INFO)) {
@@ -114,8 +116,8 @@ public class FileUtils {
 
 					lineList = tempLine_str.split(
 							ConstantDefinition.DELEMETER_TAB, -1);
-					if (lineList[0].equals(ConstantDefinition.RSD_17)) { // "rsd_17"是
-																			// operationIDList，只留取一个StepID即可
+					// "rsd_17"是 operationIDList，只留取一个StepID即可
+					if (lineList[0].equals(ConstantDefinition.RSD_17)) {
 						lineList = getSingleFromList(tempLine_str);
 						for (int i = 0; i < lineList.length; i++) {
 							if (rsdData.getOperationName() != null) {
@@ -174,7 +176,7 @@ public class FileUtils {
 		return allParams;
 	}
 
-	/*
+	/**
 	 * 判断解压出来的 moduleId productionType operationId 是否为空 为一下函数中几种状态 return true
 	 * ，否则返回false input : 需要判断的字符串
 	 */
@@ -189,7 +191,7 @@ public class FileUtils {
 		return false;
 	}
 
-	/*
+	/**
 	 * 将SVID――info中参数列表与param_name
 	 * 对应，找出svid中编号全为数字参数下标，并在param_name中只保留这些下标位置的参数 同时判断dataTypeCd
 	 * 中参数列表与param_name参数进行对应，去除str类型 ，只保留INT 和 FLT类型参数
@@ -210,14 +212,18 @@ public class FileUtils {
 		return tempList;
 	}
 
-	// 判断一个字符串是否都为数字
+	/**
+	 * 判断一个字符串是否都为数字
+	 * @param strNum
+	 * @return true or false
+	 */
 	public static boolean isDigit(String strNum) {
 		Pattern pattern = Pattern.compile("[0-9]{1,}");
 		Matcher matcher = pattern.matcher((CharSequence) strNum);
 		return matcher.matches();
 	}
 
-	/*
+	/**
 	 * 将获取到的Time参数 转换成A B 班的标准时间数据标记 2017-11-10 09:05:35.700 -----> 20171110
 	 * 060000 2017-11-10 18:05:35.700 -----> 20171110 180000
 	 */
@@ -232,7 +238,7 @@ public class FileUtils {
 		return strInfo;
 	}
 
-	/*
+	/**
 	 * String date = "2017-11-10 09:05:35.700"; 返回为 20171110 090535格式，为了判断A班 B班
 	 */
 	public static String parseDate(String date) {
@@ -248,38 +254,38 @@ public class FileUtils {
 		return newDate;
 	}
 
-	/*
+	/**
 	 * 得到指定时间的前一天 传入 Date类型 返回 一天前的Date类型
 	 */
 	public static String getBeforeDate(String str) {
 
 		Date dBefore = null;
 		SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
-		Calendar calendar = Calendar.getInstance(); // 得到日历
+		Calendar calendar = Calendar.getInstance();
 		try {
-			calendar.setTime(format.parse(str)); // 把当前时间赋给日历
+			calendar.setTime(format.parse(str));
 		} catch (ParseException e) {
 			LogManager.log("E",
 					"date format is error " + str + " " + e.getMessage());
 		}
-		calendar.add(Calendar.DAY_OF_MONTH, -1); // 设置为前一天
-		dBefore = calendar.getTime(); // 得到前一天的时间
+		// 设置为前一天
+		calendar.add(Calendar.DAY_OF_MONTH, -1);
+		// 得到前一天的时间
+		dBefore = calendar.getTime();
 
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd"); // 设置时间格式
-		String defaultStartDate = sdf.format(dBefore); // 格式化前一天
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		String defaultStartDate = sdf.format(dBefore);
 
 		return defaultStartDate;
 	}
 
-	/*
-	 * 
-	 * 
-	 * */
+
 	public static String compare_date(String date) {
 		// 20171110 090535 ,时间开始坐标位置是 9
 		int beginIndex = 9;
 		date = parseDate(date);
-		String time = date.substring(beginIndex); // 截取时间
+		// 截取时间
+		String time = date.substring(beginIndex);
 		String newDate = null;
 		/*
 		 * 如果当前time >= 060000 并且 < 180000 则属于六点班次 如果当前time >= 180000 则属于18点班次
@@ -304,7 +310,7 @@ public class FileUtils {
 		return newDate;
 	}
 
-	/*
+	/**
 	 * 提取rsd_17参数 ， 也可以提取所有用逗号隔开的参数列表 返回每个子参数列表中，全部相同值仅保留一个参数
 	 * L5300,L5300,L5300,L5300 L5300,L5300,L5300,L5300 rsd_17
 	 * operationIDList，只留取一个StepID即可
@@ -325,7 +331,7 @@ public class FileUtils {
 		return strInfo;
 	}
 
-	/*
+	/**
 	 * 判断提取出来的一行内容中，第一个关键字是否存在于line_info列表中 存在返回true ， 不存在返回false
 	 */
 	public static String hasContainsHeader(String lineStr, List<String> list) {
@@ -349,7 +355,7 @@ public class FileUtils {
 		return ConstantDefinition.EMPTYSTRING;
 	}
 
-	/*
+	/**
 	 * 0.956@ 1.957@ 去除traceParameter中每个参数后面的@字符， 返回去除@字符之后的参数列表
 	 */
 	public static List<String> deleteAt(List<String> list) {

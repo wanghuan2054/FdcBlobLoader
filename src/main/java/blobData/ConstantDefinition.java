@@ -1,4 +1,4 @@
-package blobData;
+package blobdata;
 
 public class ConstantDefinition {
 

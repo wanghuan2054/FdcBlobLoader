@@ -15,20 +15,20 @@ import com.zaxxer.hikari.HikariDataSource;
 import config.LogManager;
 
 public class hiKariCpUtils {
-	// 首先定义私有的datasource
+	// First define private datasource
 	private static DataSource datasource;
 	private static HikariConfig config = null;
 
-	// 把配置文件部分放在静态代码块中，调用时直接加载
+	// Put configuration file part in static block, load directly when called
 	static {
 		try {
-			// 加载文件
+			// Load file
 			InputStream is = hiKariCpUtils.class.getClassLoader()
 					.getResourceAsStream("datapool/hikaricp.properties");
-			// 实例化properties集合
+			// Instantiate properties collection
 			Properties prop = new Properties();
 			prop.load(is);
-			// 首先加载核心类
+			// First load core class
 			config = new HikariConfig(prop);
 			datasource = new HikariDataSource(config);
 		} catch (Exception e) {
@@ -36,12 +36,12 @@ public class hiKariCpUtils {
 		}
 	}
 
-	// 提供获得数据源
+	// Provide method to get data source
 	public static DataSource getDataSource() {
 		return datasource;
 	}
  
-	// 提供获得连接
+	// Provide method to get connection
 	public static Connection getConnection() throws SQLException {
 		return datasource.getConnection();
 	}

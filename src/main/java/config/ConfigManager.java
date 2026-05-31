@@ -10,7 +10,7 @@ import java.util.Properties;
 import blobdata.ConstantDefinition;
 
 /**
- * @author 10024908 读取 properties 配置文件的类
+ * @author 10024908 Class for reading properties configuration files
  */
 public class ConfigManager {
     private static String configPath = ConstantDefinition.DEFAULT_CONFIGFILE;
@@ -21,7 +21,7 @@ public class ConfigManager {
     ;
 
     /**
-     * 启用默认properties文件路径 ， 读取该默认文件并返回properties对象pro
+     * Use default properties file path, read the default file and return properties object pro
      *
      * @param
      * @return
@@ -51,7 +51,7 @@ public class ConfigManager {
     }
 
     /**
-     * 传入一个properties文件路径 ， 读取该文件并返回properties对象pro
+     * Pass a properties file path, read the file and return properties object pro
      *
      * @param
      * @return

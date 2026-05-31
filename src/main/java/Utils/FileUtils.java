@@ -18,7 +18,7 @@ public class FileUtils {
 	private static LinkedHashMap<String, List<String>> allParams;
 
 	/**
-	 * 从数据获取Blob字段， 并按照GZip解压缩到outPath临时路径下
+	 * Get Blob field from data, and decompress via GZip to outPath temp path
 	 */
 	public static void decompressionGZip(Blob blob, String outPath) {
 
@@ -58,7 +58,7 @@ public class FileUtils {
 	}
 
 	/**
-	 * 从临时文件resultTemp下取出解压完的Blob数据
+	 * Get decompressed Blob data from temp file resultTemp
 	 */
 	public static LinkedHashMap<String, List<String>> getContentFromTemptxt(
             RSDData rsdData, String path) {
@@ -71,10 +71,10 @@ public class FileUtils {
 		List<String> tableHeader = new ArrayList<String>();
 		allParams = new LinkedHashMap<String, List<String>>();
 		try {
-			// 此时获取到的bre就是整个文件的缓存流
+			// bre is the buffer stream for the entire file
 			bre = new BufferedReader(new FileReader(new File(path)));
 			String params_Keyname = null;
-			// 判断最后一行不存在，为空结束循环
+			// Loop ends when last line doesn't exist (is empty)
 			while ((tempLine_str = bre.readLine()) != null)
 			{
 				String[] lineList = null;
@@ -116,7 +116,7 @@ public class FileUtils {
 
 					lineList = tempLine_str.split(
 							ConstantDefinition.DELEMETER_TAB, -1);
-					// "rsd_17"是 operationIDList，只留取一个StepID即可
+					// "rsd_17" is operationIDList, keep only one StepID
 					if (lineList[0].equals(ConstantDefinition.RSD_17)) {
 						lineList = getSingleFromList(tempLine_str);
 						for (int i = 0; i < lineList.length; i++) {
@@ -128,7 +128,7 @@ public class FileUtils {
 						}
 					} else if (lineList[0].equals(ConstantDefinition.TIME)) {
 
-						// 先保留原始的time ，没有进行过AB班转换的
+						// Keep original time first, without A/B shift conversion
 						tableHeader = new ArrayList(Arrays.asList(lineList));
 						tableHeader.remove(0);
 						allParams.put("Start_DTTS", tableHeader);
@@ -177,8 +177,9 @@ public class FileUtils {
 	}
 
 	/**
-	 * 判断解压出来的 moduleId productionType operationId 是否为空 为一下函数中几种状态 return true
-	 * ，否则返回false input : 需要判断的字符串
+	 * Check if decompressed moduleId, productionType, operationId are empty
+	 * Return true for the following states, otherwise false
+	 * input: string to check
 	 */
 	public static Boolean isIllegalStr(String str) {
 
@@ -192,9 +193,9 @@ public class FileUtils {
 	}
 
 	/**
-	 * 将SVID――info中参数列表与param_name
-	 * 对应，找出svid中编号全为数字参数下标，并在param_name中只保留这些下标位置的参数 同时判断dataTypeCd
-	 * 中参数列表与param_name参数进行对应，去除str类型 ，只保留INT 和 FLT类型参数
+	 * Match SVID-info parameter list with param_name
+	 * Find indices of all-numeric parameter numbers in svid, and keep only parameters at those indices in param_name
+	 * Also match dataTypeCd parameter list with param_name parameters, remove str type, keep only INT and FLT type parameters
 	 */
 	public static List<String> getRealParamsBySourceAndTarget(
 			List<String> paramsList, List<String> svidList,
@@ -213,7 +214,7 @@ public class FileUtils {
 	}
 
 	/**
-	 * 判断一个字符串是否都为数字
+	 * Check if a string consists entirely of digits
 	 * @param strNum
 	 * @return true or false
 	 */
@@ -224,8 +225,9 @@ public class FileUtils {
 	}
 
 	/**
-	 * 将获取到的Time参数 转换成A B 班的标准时间数据标记 2017-11-10 09:05:35.700 -----> 20171110
-	 * 060000 2017-11-10 18:05:35.700 -----> 20171110 180000
+	 * Convert Time parameter to standard A/B shift time data marker
+	 * 2017-11-10 09:05:35.700 -----> 20171110 060000
+	 * 2017-11-10 18:05:35.700 -----> 20171110 180000
 	 */
 	public static String[] makeTimeToAB(String[] lineInfo) {
 
@@ -239,7 +241,8 @@ public class FileUtils {
 	}
 
 	/**
-	 * String date = "2017-11-10 09:05:35.700"; 返回为 20171110 090535格式，为了判断A班 B班
+	 * String date = "2017-11-10 09:05:35.700";
+	 * Return 20171110 090535 format, for determining A shift or B shift
 	 */
 	public static String parseDate(String date) {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -255,7 +258,8 @@ public class FileUtils {
 	}
 
 	/**
-	 * 得到指定时间的前一天 传入 Date类型 返回 一天前的Date类型
+	 * Get the day before specified date
+	 * Input Date type, return Date type one day before
 	 */
 	public static String getBeforeDate(String str) {
 
@@ -268,9 +272,9 @@ public class FileUtils {
 			LogManager.log("E",
 					"date format is error " + str + " " + e.getMessage());
 		}
-		// 设置为前一天
+		// Set to previous day
 		calendar.add(Calendar.DAY_OF_MONTH, -1);
-		// 得到前一天的时间
+		// Get previous day time
 		dBefore = calendar.getTime();
 
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
@@ -281,15 +285,16 @@ public class FileUtils {
 
 
 	public static String compare_date(String date) {
-		// 20171110 090535 ,时间开始坐标位置是 9
+		// 20171110 090535, time start position is 9
 		int beginIndex = 9;
 		date = parseDate(date);
-		// 截取时间
+		// Extract time
 		String time = date.substring(beginIndex);
 		String newDate = null;
 		/*
-		 * 如果当前time >= 060000 并且 < 180000 则属于六点班次 如果当前time >= 180000 则属于18点班次
-		 * 如果当前time < 060000 并且 < 180000 则属于六点班次
+		 * If current time >= 060000 and < 180000, belongs to 6 o'clock shift
+		 * If current time >= 180000, belongs to 18 o'clock shift
+		 * If current time < 060000 and < 180000, belongs to 6 o'clock shift
 		 */
 		if (time.compareTo(ConstantDefinition.SIX_CLOCK) >= 0
 				&& time.compareTo(ConstantDefinition.EIGHTEEN_CLOCK) < 0) {
@@ -311,9 +316,10 @@ public class FileUtils {
 	}
 
 	/**
-	 * 提取rsd_17参数 ， 也可以提取所有用逗号隔开的参数列表 返回每个子参数列表中，全部相同值仅保留一个参数
-	 * L5300,L5300,L5300,L5300 L5300,L5300,L5300,L5300 rsd_17
-	 * operationIDList，只留取一个StepID即可
+	 * Extract rsd_17 parameter, can also extract all comma-separated parameter lists
+	 * Return each sub-parameter list with only one value kept for all identical values
+	 * L5300,L5300,L5300,L5300 L5300,L5300,L5300,L5300
+	 * rsd_17 operationIDList, keep only one StepID
 	 */
 	public static String[] getSingleFromList(String lineInfo) {
 
@@ -332,7 +338,8 @@ public class FileUtils {
 	}
 
 	/**
-	 * 判断提取出来的一行内容中，第一个关键字是否存在于line_info列表中 存在返回true ， 不存在返回false
+	 * Check if the first keyword in extracted line exists in line_info list
+	 * Return true if exists, false if not
 	 */
 	public static String hasContainsHeader(String lineStr, List<String> list) {
 
@@ -342,7 +349,7 @@ public class FileUtils {
 				"status" };
 		List<String> stopWordsList = new ArrayList<String>(
 				Arrays.asList(stopCols));
-		list.removeAll(stopWordsList); // 去除 stopCols 列出的列名所包含的数据
+		list.removeAll(stopWordsList); // Remove data contained in column names listed in stopCols
 		String header = null;
 		lineStr = lineStr.split(ConstantDefinition.DELEMETER_TAB)[0].trim();
 		Iterator<String> it = list.iterator();
@@ -356,7 +363,8 @@ public class FileUtils {
 	}
 
 	/**
-	 * 0.956@ 1.957@ 去除traceParameter中每个参数后面的@字符， 返回去除@字符之后的参数列表
+	 * 0.956@ 1.957@ Remove @ character after each parameter in traceParameter
+	 * Return parameter list after @ character removal
 	 */
 	public static List<String> deleteAt(List<String> list) {
 		String result = null;
@@ -365,12 +373,12 @@ public class FileUtils {
 		Iterator<String> it = list.iterator();
 		while (it.hasNext()) {
 			singleStr = it.next();
-			// if 判断single参数串中是否含有@ ， 可以有效的去除第一个名字参数 例如：CHC_RECIPE_ID等
+			// if: check if single parameter string contains @, can effectively remove first name parameter e.g., CHC_RECIPE_ID etc.
 			if (singleStr.contains(ConstantDefinition.DELEMETER_AT)) {
 				if (singleStr.length() == 1) {
 					result = ConstantDefinition.EMPTYSTRING;
 				} else {
-					// 若参数给出目标值后@后面跟着多个SPEC，舍弃@后spec内容
+					// If parameter has target value after @ followed by multiple SPECs, discard content after @
 					result = singleStr.split(ConstantDefinition.DELEMETER_AT)[0];
 				}
 				ll.add(result);

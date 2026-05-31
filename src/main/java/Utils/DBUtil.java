@@ -57,17 +57,17 @@ public class DBUtil {
         return conn;
     }
 
-    // 使用连接池获得的 Connection
+    // Get Connection using connection pool
     public Connection getMDWConnection() throws SQLException {
 
         Connection conn = null;
         try {
-            // 使用 DBCP 方式管理的连接池
+            // Use DBCP managed connection pool
             // conn = DBCPUtils.getMDWConnection();
-            // 使用 alibaba druid 方式管理的连接池
+            // Use alibaba druid managed connection pool
             // conn = DRUIDUtils.getConnection();
 
-            // 使用 HiKariCp 方式管理的连接池
+            // Use HiKariCp managed connection pool
             conn = hiKariCpUtils.getConnection();
         } catch (SQLException e) {
             /*throw new SQLException("mdw database link error " + e.toString()) ;*/
@@ -120,10 +120,10 @@ public class DBUtil {
                 aggregateFunction = new AggregateFunction();
 
                 for (int i = 0; i < paramValues.size(); i++) {
-					// 记录每一条数据个数
+					// Record count of each data
                     nums++;
                     for (int j = 0; j < paramKey.size(); j++) {
-                        // 0 1 时间的开始和结束两个DTTS ，需要转换成TimeStamp
+                        // 0 1: start and end DTTS times, need to convert to TimeStamp
                         if (j == 0 || j == 1) {
                             ps.setString(j + 1,
                                     DateUtils.timeStampToString(Timestamp.valueOf(paramKey.get(j))));
@@ -137,7 +137,7 @@ public class DBUtil {
                     ps.setDouble(16, aggregateFunction.getMaxValue());
                     ps.setDouble(17, aggregateFunction.getAvgValue());
                     ps.addBatch();
-                    // // 每5000条，提交一次;这里不能一次提交过多的数据 。
+                    // // Commit every 5000 records; cannot commit too many at once
                     // if (nums > 500) {
                     // ps.executeBatch();
                     // conn.commit();
@@ -150,11 +150,11 @@ public class DBUtil {
             }
         } catch (SQLException e1) {
             try {
-                // 若出现异常，对数据库中所有已完成的操作全部撤销，则回滚到事务开始状态
+                // If exception occurs, rollback all completed operations to transaction start state
                 if (!conn.isClosed()) {
-					// 4,当异常发生执行catch中SQLException时，记得要rollback(回滚)；
+					// When SQLException occurs in catch block, remember to rollback
                     conn.rollback();
-                    LogManager.log("I", " 插入失败，回滚！" + e1.getMessage().trim()
+                    LogManager.log("I", " Insert failed, rollback! " + e1.getMessage().trim()
                             + paramKey.toString()
                             + ConstantDefinition.DELEMETER_SPACE
                             + aggregateFunction.getItemName());
@@ -171,8 +171,9 @@ public class DBUtil {
     }
 
     /**
-     * Fuction description : 从 EQP_TRACE_TRX_FDC 拿数据 input :传入 startTime -
-     * endTime（一般为一天 按天为单位） return : 返回这个时间段内的符合package中筛选条件的Glass 记录集
+     * Function description: Fetch data from EQP_TRACE_TRX_FDC
+     * input: startTime - endTime (typically one day)
+     * return: ResultSet of Glass records matching filter conditions within this time period
      */
     public ResultSet getSingleRescordsFromEQP_TRACE_TRX_FDC(String moduleId,
                                                             String glassID, String dcpID) {
@@ -198,8 +199,9 @@ public class DBUtil {
     }
 
     /**
-     * Fuction description : 从 EQP_TRACE_TRX_FDC 拿数据 input :传入 startTime -
-     * endTime（一般为一天 按天为单位） return : 返回这个时间段内的符合package中筛选条件的Glass 记录集
+     * Function description: Fetch data from EQP_TRACE_TRX_FDC
+     * input: startTime - endTime (typically one day)
+     * return: ResultSet of Glass records matching filter conditions within this time period
      */
     public ResultSet getRecordsFromEQP_TRACE_TRX_FDC(String startTime,
                                                      String endTime) {
@@ -226,8 +228,10 @@ public class DBUtil {
     }
 
     /**
-     * 若解压出来的blob文件中 缺少moduleName、ProductiType、stepID 会从getBlob的时候同时拿到
-     * moduleName 、ProductiType、 StepID三个参数 补充Blob中缺失的参数 返回封装这三个参数的对象 RSDData
+     * If decompressed blob file is missing moduleName, ProductiType, stepID
+     * Will get moduleName, ProductiType, StepID from getBlob simultaneously
+     * Supplement missing parameters in Blob
+     * Return RSDData object encapsulating these three parameters
      */
     public RSDData parserBlobData(ResultSet rs) {
         Connection conn = getFDCConnection();

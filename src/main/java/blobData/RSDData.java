@@ -3,7 +3,7 @@ package blobdata;
 public class RSDData {
 	// RSD_04
 	private String moduleName;
-	// RSD_05 Production Type 目前无法从EQP_TRACE_TRX_FDC表的相关字段得到，暂时不启用这个属性
+	// RSD_05 Production Type - currently cannot be obtained from EQP_TRACE_TRX_FDC table fields, this property is temporarily disabled
 	private String productionType;
 	//  RSD_17
 	private String operationName;

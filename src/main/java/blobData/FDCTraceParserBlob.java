@@ -15,8 +15,8 @@ public class FDCTraceParserBlob {
 	private DBUtil dbUtil = DBUtil.getInstance();
 
 	/*
-	 * 获取step中的开始step 索引 ，即从每一秒上传的 trace data 中获取step开始步骤 去除step
-	 * 长度=0，就是Step为none情况 , 去除step 为0.0的情况
+	 * Get the start step index from step, i.e., get the step start step from trace data uploaded every second
+	 * Remove step length=0 (step is none case), remove step as 0.0 case
 	 */
 	public int getBeginIndexOfStep(LinkedHashMap<String, List<String>> hmParam2) {
 		Iterator<Entry<String, List<String>>> iter = hmParam2.entrySet()
@@ -40,7 +40,7 @@ public class FDCTraceParserBlob {
 	}
 
 	/*
-	 * 获取step中的结尾step 索引 ，即从每一秒上传的 trace data 中获取step结束最后一步步骤
+	 * Get the end step index from step, i.e., get the step end last step from trace data uploaded every second
 	 */
 	public int getEndIndexOfStep(LinkedHashMap<String, List<String>> hmParam2) {
 		Iterator<Entry<String, List<String>>> iter = hmParam2.entrySet()
@@ -79,8 +79,8 @@ public class FDCTraceParserBlob {
 	}
 
 	/*
-	 * 从tempTxt中读取内容，并生成数据库表存储格式 返回整张表存在内存中 List<ArrayList<String>> Table
-	 * 中存储表列字段 和所有记录
+	 * Read content from tempTxt and generate database table storage format
+	 * Return the entire table stored in memory List<ArrayList<String>> Table storing table column fields and all records
 	 */
 	public Table createTable(ResultSet rs) {
 
@@ -128,7 +128,8 @@ public class FDCTraceParserBlob {
 	}
 
 	/*
-	 * 按照step分组统计每个参数的min max avg 从上述生成的table中 找到step的开始和结束索引,
+	 * Group by step and calculate min max avg for each parameter
+	 * Find step start and end index from the generated table
 	 */
 	public int getStepIndexShift(int startIndex,
 			List<ArrayList<String>> tableList) {
@@ -149,7 +150,8 @@ public class FDCTraceParserBlob {
 	}
 
 	/*
-	 * 按照time 分组统计每个参数的min max avg 从上述生成的table中 找到step的开始和结束索引,
+	 * Group by time and calculate min max avg for each parameter
+	 * Find step start and end index from the generated table
 	 */
 	public int getTimeIndexShift(int startIndex,
 			List<ArrayList<String>> tableList) {
@@ -170,7 +172,8 @@ public class FDCTraceParserBlob {
 	}
 
 	/*
-	 * 给定开始索引和结束索引，还有 table 查询在索引段之间所有参数的 min max avg
+	 * Given start index and end index, and table
+	 * Query min max avg for all parameters between index range
 	 */
 	public LinkedHashMap<Vector<String>, List<AggregateFunction>> computeAggFuction(
 			Table table, int begin, int end) {
@@ -193,7 +196,7 @@ public class FDCTraceParserBlob {
 		StringBuilder sBuilder = new StringBuilder();
 		Vector<String> vector = new Vector<String>();
 		for (int i = 0; i <= table.getLastIndexOfComFields(); i++) {
-			ArrayList<String> arr1 = tableList.get(begin); // 取这一分组后的第一条记录的公共字段
+			ArrayList<String> arr1 = tableList.get(begin); // Get common fields from first record of this group
 			if (i == 0) {
 				// sBuilder.append(arr1.get(i));
 				vector.add(arr1.get(i));
@@ -217,7 +220,7 @@ public class FDCTraceParserBlob {
 					vector.insertElementAt(arr.get(0), 1);
 					endDTTSBoolean = false;
 				}
-				if (isNumeric(arr.get(i))) { // 若参数中出现非数字参数，直接跳过不参与计算
+				if (isNumeric(arr.get(i))) { // If non-numeric parameter appears, skip it from calculation
 					nums.add(Double.valueOf(arr.get(i)));
 					sum += Double.valueOf(arr.get(i));
 				} else {
@@ -236,11 +239,11 @@ public class FDCTraceParserBlob {
 	}
 
 	/*
-	 * 判断是否为浮点数
+	 * Check if the string is a floating point number
 	 * 
-	 * @param str 传入的字符串
+	 * @param str input string
 	 * 
-	 * @return 是浮点数返回true,否则返回false
+	 * @return true if floating point number, otherwise false
 	 */
 	public boolean isNumeric(String str) {
 		Pattern pattern = Pattern.compile("-?[0-9]*.?[0-9]+");
@@ -252,9 +255,9 @@ public class FDCTraceParserBlob {
 	}
 
 	/*
-	 * 按照step and time 进行groupBy 分组之和计算每张玻璃在每一个Step 和 time(班次)之间 ，
-	 * 参数名、参数的最大、最小值，以及平均值 得到上述四个值后，并得到这个分组开始和结束时间，拿到公共字段如：Lotid glassId
-	 * recipe等写入数据库
+	 * Group by step and time, then calculate parameter name, max, min, and avg values
+	 * for each glass between each Step and time (shift)
+	 * After getting above four values, get group start and end time, fetch common fields like: Lotid glassId recipe etc. and write to database
 	 */
 	public void groupByStepAndTime(Table table) {
 
@@ -266,13 +269,13 @@ public class FDCTraceParserBlob {
 		int cnt = tableList.size();
 		int i = 0;
 		while (i < cnt) {
-			// continue 判断一个Glass的开始班次和结束班次
-			// start = end 属于一个班次 只计算 step 索引
-			// start ！= end 即不属于同一个班次 需要计算step 和 time 索引
+			// continue: determine start shift and end shift of a Glass
+			// start = end: belongs to same shift, only calculate step index
+			// start != end: not same shift, need to calculate both step and time index
 			stepRangeIndex = getStepIndexShift(i, tableList);
 			timeRangeIndex = getTimeIndexShift(i, tableList);
-			if (((i + timeRangeIndex) == (cnt - 1))) { // 所有时间属于一个班次
-				// 按照实际的 step 范围计算
+			if (((i + timeRangeIndex) == (cnt - 1))) { // All times belong to same shift
+				// Calculate by actual step range
 				finalResults = computeAggFuction(table, i, stepRangeIndex);
 				// displayEveryGroup(finalResults);
 				// new Thread(new Runnable() {
@@ -284,9 +287,9 @@ public class FDCTraceParserBlob {
 				// }).start();
 				DBUtil.getInstance().writeToMDW(finalResults);
 				i += (stepRangeIndex + 1);
-			} else { // 不属于一个班次
+			} else { // Not same shift
 				if (stepRangeIndex > timeRangeIndex) {
-					// 分AB班 两个班次处理
+					// Process A and B shifts separately
 					finalResults = computeAggFuction(table, i, timeRangeIndex);
 					// displayEveryGroup(finalResults);
 					DBUtil.getInstance().writeToMDW(finalResults);
@@ -301,10 +304,10 @@ public class FDCTraceParserBlob {
 		}
 	}
 
-	/* 测试时候使用
-	 * 对聚合之后的结果写到数据库之前 ， 打印输出到屏幕 result中保存结果数据的属性字段，以及结果数据行 Start_DTTS End_DTTS
-	 * time lotid substrateid slot recipe product step stepname rsd_04 rsd_05
-	 * L5300 以及所有參數
+	/* Used during testing
+	 * Before writing aggregated results to database, print to screen
+	 * result stores result data attribute fields and result data rows
+	 * Start_DTTS End_DTTS time lotid substrateid slot recipe product step stepname rsd_04 rsd_05 L5300 and all parameters
 	 */
 	public void displayEveryGroup(
 			LinkedHashMap<Vector<String>, List<AggregateFunction>> result) {

@@ -5,8 +5,8 @@ import java.util.List;
 
 public class Table {
  
-	private List<String> fields; // 存放常规字段和参数字段的列表
-	private List<ArrayList<String>> tableRecords; // 存储所有参数信息表
+	private List<String> fields; // List storing regular fields and parameter fields
+	private List<ArrayList<String>> tableRecords; // Table storing all parameter information
 
 	public Table() {
 	}
@@ -28,7 +28,9 @@ public class Table {
 	}
 
 	/*
-	 * fields 列表中分割出共有字段 返回每张Glass共有的信息字段 得到最后一个共有字段的索引
+	 * Split common fields from fields list
+	 * Return common information fields for each Glass
+	 * Get index of last common field
 	 */
 	public int getLastIndexOfComFields() {
 		return EDS_FDC_TRACEFIELD.RSD_17.getIndex();
@@ -47,7 +49,8 @@ public class Table {
 	}
 
 	/*
-	 * fields 列表中分割每张Glass上传的参数名称列表 返回 参数名称列表
+	 * Split parameter name list uploaded by each Glass from fields list
+	 * Return parameter name list
 	 */
 	public List<String> getParams() {
 

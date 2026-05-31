@@ -34,7 +34,7 @@ public class ConstantDefinition {
 	
 	public static final String DEFAULT_LOGCONFIGFILE = "log4j.properties";
 
-	// 每一条Blob解压出来的字段 ， 提取出来的数据临时存在该文件下
+	// Fields extracted from each Blob, extracted data temporarily stored in this file
 	public static final String TEMPFILE = "resultTemp.txt";
 
 	public static final String EMPTYSTRING = "";

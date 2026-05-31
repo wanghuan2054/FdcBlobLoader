@@ -16,25 +16,26 @@ import config.LogManager;
 
 public class MainProgram {
 	/*
-	 * 得到指定分钟后的时间 传入 str类型 返回 指定分钟后的str类型 input 20171201 070000 （30分钟） return
-	 * 20171201 073000
+	 * Get time after specified minutes
+	 * Input str type, return str type after specified minutes
+	 * input 20171201 070000 (30 minutes) return 20171201 073000
 	 */
 	public static String getAfterTime(String str) {
 
 		Date dBefore = null;
 		SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd HHmmss");
-		Calendar calendar = Calendar.getInstance(); // 得到日历
+		Calendar calendar = Calendar.getInstance(); // Get calendar
 		try {
-			calendar.setTime(format.parse(str)); // 把当前时间赋给日历
+			calendar.setTime(format.parse(str)); // Assign current time to calendar
 		} catch (ParseException e) {
 			System.err.println();
 			LogManager
 					.log("E", "date format is error :" + str + e.getMessage());
 		}
-		calendar.add(Calendar.MINUTE, 30); // 设置为30 minute 后
+		calendar.add(Calendar.MINUTE, 30); // Set to 30 minutes later
 		dBefore = calendar.getTime();
 
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HHmmss"); // 设置时间格式
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HHmmss"); // Set time format
 		String defaultStartDate = sdf.format(dBefore);
 
 		return defaultStartDate;
@@ -42,11 +43,11 @@ public class MainProgram {
 
 	/**
 	 * 
-	 * @return 20171201 073000 str 类型
+	 * @return 20171201 073000 str type
 	 */
 	public static String getCurrentTime() {
 
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HHmmss"); // 设置时间格式
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HHmmss"); // Set time format
 		String currentDate = sdf.format(new Date());
 
 		return currentDate;
@@ -70,21 +71,21 @@ public class MainProgram {
 				try {
 					LogManager.log("I", "endTime:" + endTime + " > "
 							+ "currentTime:" + getCurrentTime()
-							+ ",需要线程挂起5分钟等待");
-					Thread.sleep(300000); // 如果endTime 大于 当前时间，则等待5分钟
+							+ ", thread needs to suspend for 5 minutes waiting");
+					Thread.sleep(300000); // If endTime is greater than current time, wait for 5 minutes
 				} catch (InterruptedException e) {
 					LogManager.log("E", e.getMessage());
 				}
 			}
 			ResultSet rs = null;
 			long t1 = System.currentTimeMillis();
-			/* 测试指定startTime-endTime多组数据时采用 */
+			/* Used when testing multiple groups of data within specified startTime-endTime */
 			rs = DBUtil.getInstance().getRecordsFromEQP_TRACE_TRX_FDC(
 					startTime, endTime);
-			LogManager.log("I", "\n正在查询 EQP_TRACE_TRX_FDC between " + startTime
+			LogManager.log("I", "\nQuerying EQP_TRACE_TRX_FDC between " + startTime
 					+ " to " + endTime);
 
-			/* 测试单个数据， 单条 Glass data 时采用 */
+			/* Used when testing single Glass data */
 /*			 rs = DBUtil.getInstance().getSingleRescordsFromEQP_TRACE_TRX_FDC(
 			 "BOE/B6/LBP_2F/LTPS:6LTDH01/6LTDH01-CHMB", "6LF6990046A2",
 			 "6LTDH01_DCP"); // 6LWN6Y0731C3
@@ -98,8 +99,8 @@ public class MainProgram {
 
 					fdcTraceParserBlob.groupByStepAndTime(fdcTraceParserBlob
 							.createTable(rs));
-					LogManager.log("I", "第 " + count
-							+ " 条Glass Blob data process finished");
+					LogManager.log("I", "The " + count
+							+ "th Glass Blob data process finished");
 				}
 			} catch (SQLException e) {
 				LogManager.log("E", e.toString());
@@ -115,12 +116,12 @@ public class MainProgram {
 
 			long t2 = System.currentTimeMillis();
 
-			// 输出程序总执行时间
+			// Output total program execution time
 			LogManager.log("I", "From " + startTime + " to " + endTime + " "
-					+ count + " 条数据" + " 共计耗时:" + (t2 - t1) / 1000.0 / 60.0
+					+ count + " records, total time elapsed: " + (t2 - t1) / 1000.0 / 60.0
 					+ "minutes");
 
-			LogManager.log("I", "半小时数据查询完毕，需要线程挂起等待下一次查询");
+			LogManager.log("I", "Half-hour data query completed, thread needs to suspend waiting for next query");
 		}
 
 	}
